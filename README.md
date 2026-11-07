@@ -1,30 +1,32 @@
-# Guía: OpenVPN (Proton VPN) + LINE en Debian con GNOME
+# Guide: OpenVPN (Proton VPN) + LINE on Debian with GNOME
 
-Guía paso a paso para usar **LINE** en **Debian (GNOME)** cuando hay restricciones por ubicación,
-usando **OpenVPN** con el plan gratuito de **Proton VPN** y la extensión de LINE en un navegador
-basado en Chromium (Brave, Chrome o Chromium).
+🌐 **English** | [Español](README.es.md)
 
-> Probado en Debian 13 con GNOME, conexión por cable (RJ45).
+Step-by-step guide to using **LINE** on **Debian (GNOME)** when there are location-based restrictions,
+using **OpenVPN** with **Proton VPN**'s free plan and the LINE extension in a Chromium-based browser
+(Brave, Chrome or Chromium).
 
----
-
-## Índice
-
-1. [Instalar OpenVPN](#1-instalar-openvpn)
-2. [Crear cuenta en Proton VPN y descargar el archivo .ovpn](#2-crear-cuenta-en-proton-vpn-y-descargar-el-archivo-ovpn)
-3. [Obtener el usuario y contraseña de OpenVPN](#3-obtener-el-usuario-y-contraseña-de-openvpn)
-4. [Importar la VPN en GNOME](#4-importar-la-vpn-en-gnome)
-5. [Configurar usuario y contraseña en la VPN](#5-configurar-usuario-y-contraseña-en-la-vpn)
-6. [Conectarse y comprobar](#6-conectarse-y-comprobar)
-7. [Usar LINE en el navegador](#7-usar-line-en-el-navegador)
-8. [Problemas comunes](#8-problemas-comunes)
-9. [Seguridad](#9-seguridad)
+> Tested on Debian 13 with GNOME, using a wired connection (RJ45).
 
 ---
 
-## 1. Instalar OpenVPN
+## Contents
 
-Abrir una terminal y ejecutar (pide la contraseña de tu usuario de Debian; al escribirla no se ven los caracteres, es normal):
+1. [Install OpenVPN](#1-install-openvpn)
+2. [Create a Proton VPN account and download the .ovpn file](#2-create-a-proton-vpn-account-and-download-the-ovpn-file)
+3. [Get the OpenVPN username and password](#3-get-the-openvpn-username-and-password)
+4. [Import the VPN into GNOME](#4-import-the-vpn-into-gnome)
+5. [Set the username and password on the VPN](#5-set-the-username-and-password-on-the-vpn)
+6. [Connect and verify](#6-connect-and-verify)
+7. [Use LINE in the browser](#7-use-line-in-the-browser)
+8. [Common problems](#8-common-problems)
+9. [Security](#9-security)
+
+---
+
+## 1. Install OpenVPN
+
+Open a terminal and run the commands below. They ask for your Debian user password; the characters stay hidden while you type, which is normal.
 
 ```bash
 sudo apt update && sudo apt install -y openvpn network-manager-openvpn network-manager-openvpn-gnome
@@ -34,98 +36,98 @@ sudo apt update && sudo apt install -y openvpn network-manager-openvpn network-m
 sudo systemctl restart NetworkManager
 ```
 
-Paquetes instalados:
+Installed packages:
 
-| Paquete | Para qué sirve |
+| Package | What it does |
 |---|---|
-| `openvpn` | El programa de VPN |
-| `network-manager-openvpn` | Permite a NetworkManager usar OpenVPN |
-| `network-manager-openvpn-gnome` | Agrega OpenVPN a la configuración de red de GNOME |
+| `openvpn` | The VPN program |
+| `network-manager-openvpn` | Lets NetworkManager use OpenVPN |
+| `network-manager-openvpn-gnome` | Adds OpenVPN to GNOME's network settings |
 
-> **¿Hace falta Wi-Fi?** No. La VPN funciona sobre cualquier conexión a internet, incluido el cable de red (RJ45).
+> **Is Wi-Fi required?** No. The VPN works over any internet connection, including a wired one (RJ45).
 
 ---
 
-## 2. Crear cuenta en Proton VPN y descargar el archivo .ovpn
+## 2. Create a Proton VPN account and download the .ovpn file
 
-OpenVPN es solo el programa; se necesita un servidor. Proton VPN tiene un plan gratuito.
+OpenVPN is only the program; you also need a server. Proton VPN has a free plan.
 
-1. Entrar a **protonvpn.com** → **Get Proton VPN** → elegir el plan **Free** y registrarse.
-2. Entrar a **account.protonvpn.com**.
-3. En el menú izquierdo: **Downloads** (Descargas).
-4. Bajar hasta **OpenVPN configuration files** y elegir:
+1. Go to **protonvpn.com** → **Get Proton VPN** → choose the **Free** plan and sign up.
+2. Go to **account.protonvpn.com**.
+3. In the left menu: **Downloads**.
+4. Scroll down to **OpenVPN configuration files** and choose:
    - **Platform:** Linux
    - **Protocol:** UDP
-   - **Free server configs** (servidores gratuitos)
-5. Elegir un país y hacer clic en **Download**.
-   - **Japón (JP)**: buena opción para LINE (es una app muy usada allá), pero más lejos → algo más lento.
-   - **Estados Unidos (US)**: más cerca de Chile → más rápido.
-   - Se recomienda descargar ambos y probar.
+   - **Free server configs**
+5. Pick a country and click **Download**.
+   - **Japan (JP):** a good option for LINE, which is widely used there, but it is farther away, so it is somewhat slower.
+   - **United States (US):** closer to Chile, so it is faster.
+   - Downloading both and trying each is recommended.
 
-El archivo se llama, por ejemplo, `jp-free-16.protonvpn.udp.ovpn`.
+The file is named something like `jp-free-16.protonvpn.udp.ovpn`.
 
-> ⚠️ El plan gratuito **no tiene servidores en Chile**. Si necesitas aparecer en otra ciudad de Chile,
-> hace falta un plan de pago (Proton VPN Plus u otro proveedor con servidores en Chile).
-
----
-
-## 3. Obtener el usuario y contraseña de OpenVPN
-
-Estos datos **no son** tu correo ni tu contraseña de Proton.
-
-1. En **account.protonvpn.com** → menú izquierdo → **Account**.
-2. Buscar el recuadro **OpenVPN / IKEv2 username**.
-3. Ahí aparecen:
-   - **OpenVPN username** → botón de copiar al lado.
-   - **OpenVPN password** → botón de copiar; el ícono del ojo solo la muestra u oculta.
-
-**Reset credentials** (restablecer credenciales): genera un usuario y contraseña **nuevos** y los
-anteriores dejan de funcionar. Úsalo si la conexión falla por autenticación o si alguien vio tus datos.
+> ⚠️ The free plan **has no servers in Chile**. If you need to appear in another Chilean city,
+> you need a paid plan (Proton VPN Plus or another provider with servers in Chile).
 
 ---
 
-## 4. Importar la VPN en GNOME
+## 3. Get the OpenVPN username and password
 
-Con el archivo `.ovpn` guardado (en este ejemplo en `~/Documents`):
+These are **not** your Proton email or password.
+
+1. On **account.protonvpn.com** → left menu → **Account**.
+2. Find the **OpenVPN / IKEv2 username** section.
+3. It shows:
+   - **OpenVPN username**, with a copy button next to it.
+   - **OpenVPN password**, with a copy button; the eye icon only shows or hides it.
+
+**Reset credentials** generates a **new** username and password, and the old ones stop working.
+Use it if the connection fails with an authentication error or if someone else saw your credentials.
+
+---
+
+## 4. Import the VPN into GNOME
+
+With the `.ovpn` file saved (in `~/Documents` in this example):
 
 ```bash
 nmcli connection import type openvpn file ~/Documents/jp-free-16.protonvpn.udp.ovpn
 ```
 
-Opcional, ponerle un nombre más claro:
+Optionally, give it a clearer name:
 
 ```bash
 nmcli connection modify jp-free-16.protonvpn.udp connection.id "ProtonVPN Japon"
 ```
 
-También se puede hacer de forma gráfica: **Configuración → Red → VPN (+) → Importar desde archivo…**
+You can also do this graphically: **Settings → Network → VPN (+) → Import from file…**
 
 ---
 
-## 5. Configurar usuario y contraseña en la VPN
+## 5. Set the username and password on the VPN
 
-Si la ventana **"Authentication required"** aparece una y otra vez, es porque falta el **nombre de usuario**.
+If the **"Authentication required"** window keeps popping up, the **username** is missing.
 
-1. **Configuración → Red →** engranaje ⚙️ junto a **ProtonVPN Japon**.
-2. Pestaña **Identity**, sección **Authentication**:
+1. **Settings → Network →** gear icon ⚙️ next to **ProtonVPN Japon**.
+2. **Identity** tab, **Authentication** section:
    - **Type:** `Password`
-   - **User name:** pegar el **OpenVPN username**.
-   - **Password:** hacer clic en el ícono de la derecha del campo → **Store the password only for this user**, y pegar el **OpenVPN password**.
-3. No tocar **Gateway** ni **CA certificate**.
-4. Clic en **Apply**.
+   - **User name:** paste the **OpenVPN username**.
+   - **Password:** click the icon on the right of the field → **Store the password only for this user**, then paste the **OpenVPN password**.
+3. Do not change **Gateway** or **CA certificate**.
+4. Click **Apply**.
 
 ---
 
-## 6. Conectarse y comprobar
+## 6. Connect and verify
 
-1. Clic en la **esquina superior derecha** (íconos de red/volumen/batería).
-2. **VPN → ProtonVPN Japon** → activar.
-3. Aparece un ícono de VPN/candado en la barra superior.
-4. Comprobar en **whatismyipaddress.com** que el país sea **Japan**.
+1. Click the **top-right corner** of the screen, where the network, volume and battery icons are.
+2. **VPN → ProtonVPN Japon** → turn it on.
+3. A VPN or lock icon appears in the top bar.
+4. Check on **whatismyipaddress.com** that the country shows **Japan**.
 
-Para desconectar: mismo menú → apagar la VPN.
+To disconnect, use the same menu and turn the VPN off.
 
-También desde la terminal:
+From the terminal:
 
 ```bash
 nmcli connection up "ProtonVPN Japon"
@@ -137,53 +139,53 @@ nmcli connection down "ProtonVPN Japon"
 
 ---
 
-## 7. Usar LINE en el navegador
+## 7. Use LINE in the browser
 
-LINE no tiene app oficial para Linux, pero sí una **extensión oficial** para navegadores basados en
-Chromium (**Brave**, Chrome, Chromium). No funciona en Firefox.
+LINE has no official Linux app, but it does have an **official extension** for Chromium-based
+browsers (**Brave**, Chrome, Chromium). It does not work in Firefox.
 
-### 7.1 Preparar el celular
+### 7.1 Prepare your phone
 
-En la app de LINE: **Inicio → Configuración ⚙️ → Cuenta**:
+In the LINE app: **Home → Settings ⚙️ → Account**:
 
-- Activar **Permitir inicio de sesión** (*Allow login*).
-- (Opcional) Registrar un **correo electrónico** para entrar con correo y contraseña.
+- Turn on **Allow login**.
+- (Optional) Register an **email address** so you can log in with email and password.
 
-### 7.2 Instalar la extensión
+### 7.2 Install the extension
 
-1. Abrir **Brave** (o Chrome) → **chromewebstore.google.com**.
-2. Buscar **LINE** y verificar que el desarrollador sea **LINE Corporation / LY Corporation** (hay copias falsas).
-3. **Agregar a Brave / Add to Chrome**.
+1. Open **Brave** (or Chrome) → **chromewebstore.google.com**.
+2. Search for **LINE** and make sure the developer is **LINE Corporation / LY Corporation**, because there are fake copies.
+3. Click **Add to Brave / Add to Chrome**.
 
-### 7.3 Iniciar sesión
+### 7.3 Log in
 
-1. Clic en el ícono de LINE (o dentro del ícono de extensiones 🧩).
-2. Entrar con **código QR** (escanear desde el celular: Inicio → escáner QR) o con **correo y contraseña**.
-3. Escribir en el celular el **código de verificación** que muestra el computador.
-4. Listo: aparecen los contactos y chats.
+1. Click the LINE icon (it may be inside the extensions icon 🧩).
+2. Log in with a **QR code** (scan it from your phone: Home → QR scanner) or with **email and password**.
+3. Enter the **verification code** shown on the computer into your phone.
+4. Your contacts and chats now appear.
 
-> **Nota:** *LINE Developers* (developers.line.biz) es para programadores que crean bots y apps.
-> **No** sirve para chatear con tus contactos.
+> **Note:** *LINE Developers* (developers.line.biz) is for programmers who build bots and apps.
+> It is **not** for chatting with your contacts.
 
-Orden recomendado: **conectar la VPN primero → luego abrir LINE**.
+Recommended order: **connect the VPN first, then open LINE**.
 
 ---
 
-## 8. Problemas comunes
+## 8. Common problems
 
-| Problema | Solución |
+| Problem | Solution |
 |---|---|
-| La ventana de contraseña aparece todo el tiempo | Falta el *User name* en la VPN (ver paso 5). |
-| Error de autenticación | Verificar que usas el usuario/contraseña de **OpenVPN**, no los de la cuenta Proton. Revisar que no se copiaron espacios. Si sigue, usar **Reset credentials** y poner los nuevos datos. |
-| No aparece la opción VPN en GNOME | Instalar `network-manager-openvpn-gnome` y reiniciar NetworkManager (paso 1). |
-| Conexión lenta | Probar un servidor más cercano (US). |
-| LINE pide permiso para iniciar sesión | Activar *Permitir inicio de sesión* en el celular (paso 7.1). |
+| The password window keeps appearing | The *User name* is missing on the VPN (see step 5). |
+| Authentication error | Make sure you are using the **OpenVPN** username and password, not your Proton account credentials. Check that no spaces were copied. If it still fails, use **Reset credentials** and enter the new ones. |
+| The VPN option does not appear in GNOME | Install `network-manager-openvpn-gnome` and restart NetworkManager (step 1). |
+| Slow connection | Try a closer server (US). |
+| LINE asks for permission to log in | Turn on *Allow login* on your phone (step 7.1). |
 
 ---
 
-## 9. Seguridad
+## 9. Security
 
-- **Nunca** compartas contraseñas en chats, capturas de pantalla ni repositorios.
-- Si tus credenciales de OpenVPN se vieron en algún lado, usa **Reset credentials** en Proton.
-- No subas archivos `.ovpn` con credenciales a GitHub.
-- Instala la extensión de LINE solo si el desarrollador es el oficial.
+- **Never** share passwords in chats, screenshots or repositories.
+- If your OpenVPN credentials were exposed anywhere, use **Reset credentials** in Proton.
+- Do not upload `.ovpn` files containing credentials to GitHub.
+- Only install the LINE extension if the developer is the official one.
