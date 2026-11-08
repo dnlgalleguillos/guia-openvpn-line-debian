@@ -19,8 +19,9 @@ basado en Chromium (Brave, Chrome o Chromium).
 5. [Configurar usuario y contraseña en la VPN](#5-configurar-usuario-y-contraseña-en-la-vpn)
 6. [Conectarse y comprobar](#6-conectarse-y-comprobar)
 7. [Usar LINE en el navegador](#7-usar-line-en-el-navegador)
-8. [Problemas comunes](#8-problemas-comunes)
-9. [Seguridad](#9-seguridad)
+8. [LINE con tema oscuro](#8-line-con-tema-oscuro)
+9. [Problemas comunes](#9-problemas-comunes)
+10. [Seguridad](#10-seguridad)
 
 ---
 
@@ -171,7 +172,78 @@ Orden recomendado: **conectar la VPN primero → luego abrir LINE**.
 
 ---
 
-## 8. Problemas comunes
+## 8. LINE con tema oscuro
+
+La extensión de LINE no tiene opción de tema oscuro. La solución es una **ventana de Brave aparte, solo para LINE**,
+con modo oscuro forzado: así **solo LINE** se ve oscuro y tu Brave normal no cambia.
+
+> La opción global de Brave `brave://flags/#enable-force-dark` oscurecería **todas** las páginas; por eso aquí
+> se usa un perfil separado. Extensiones como Dark Reader no pueden modificar las páginas de otra extensión.
+
+Los scripts están en la carpeta [`scripts/`](scripts). Suponen Brave instalado como **Flatpak**
+(`com.brave.Browser`) y la extensión oficial de LINE (ID `ophjlpahpchlmihnnnihgmmeilfjmjjc`).
+
+| Archivo | Qué hace |
+|---|---|
+| [`line-oscuro`](scripts/line-oscuro) | Abre LINE en su propia ventana, en modo oscuro, con un perfil de Brave separado |
+| [`line-login-claro`](scripts/line-login-claro) | Abre el mismo perfil **sin** modo oscuro, solo para iniciar sesión con el código QR |
+| [`line-oscuro.desktop`](scripts/line-oscuro.desktop) | Acceso directo "LINE (oscuro)" para el menú de aplicaciones de GNOME |
+
+### 8.1 Instalar
+
+Desde la carpeta del repositorio:
+
+```bash
+mkdir -p ~/.local/bin ~/.local/share/applications ~/.local/share/icons
+```
+
+```bash
+cp scripts/line-oscuro scripts/line-login-claro ~/.local/bin/ && chmod +x ~/.local/bin/line-oscuro ~/.local/bin/line-login-claro
+```
+
+```bash
+cp scripts/line-oscuro.desktop ~/.local/share/applications/
+```
+
+Ícono opcional (copiado de la extensión de LINE instalada en tu Brave normal):
+
+```bash
+cp ~/.var/app/com.brave.Browser/config/BraveSoftware/Brave-Browser/Default/Extensions/ophjlpahpchlmihnnnihgmmeilfjmjjc/*/line_logo_128x128_on.png ~/.local/share/icons/line-oscuro.png
+```
+
+### 8.2 Primer uso
+
+1. Presiona **Super**, escribe **LINE** y abre **LINE (oscuro)**.
+2. La primera vez se abre la Chrome Web Store en la página de LINE → **Agregar a Brave**. Después cierra esa ventana.
+3. **Inicia sesión en modo claro.** En modo oscuro, el logo verde del código QR se vuelve blanco y el celular
+   puede no reconocerlo. Por eso, inicia sesión una vez en modo claro:
+
+   ```bash
+   ~/.local/bin/line-login-claro
+   ```
+
+   Escanea el QR **desde dentro de la app de LINE** (Inicio → ícono QR del buscador), confirma en el celular
+   y escribe el código de 6 números.
+4. Cuando veas tus chats, **cierra esa ventana**.
+5. Abre **LINE (oscuro)** otra vez. La sesión queda guardada, así que entra directo a tus chats en modo oscuro.
+
+Consejo: clic derecho en su ícono del dock → **Añadir a favoritos / Fijar en el dock**.
+
+### 8.3 Notas
+
+- LINE permite **una sola sesión de computador a la vez**. Si usas LINE (oscuro), cierra sesión en la extensión
+  de LINE de tu Brave normal (o quítala) para evitar conflictos.
+- Si LINE vuelve a pedir inicio de sesión, repite el paso 3.
+- Cómo funciona: `line-oscuro` ejecuta Brave con
+  `--user-data-dir=<perfil separado>` y
+  `--enable-features=WebContentsForceDark:inversion_method/cielab_based/image_behavior/none`
+  (oscurece fondos y textos sin cambiar las imágenes), y abre la extensión con `--app=` como ventana propia.
+- Para desinstalar: borra los tres archivos que copiaste y la carpeta del perfil
+  `~/.var/app/com.brave.Browser/config/BraveSoftware/Brave-LINE-Oscuro`.
+
+---
+
+## 9. Problemas comunes
 
 | Problema | Solución |
 |---|---|
@@ -180,10 +252,11 @@ Orden recomendado: **conectar la VPN primero → luego abrir LINE**.
 | No aparece la opción VPN en GNOME | Instalar `network-manager-openvpn-gnome` y reiniciar NetworkManager (paso 1). |
 | Conexión lenta | Probar un servidor más cercano (US). |
 | LINE pide permiso para iniciar sesión | Activar *Permitir inicio de sesión* en el celular (paso 7.1). |
+| El código QR no hace nada en LINE (oscuro) | Inicia sesión con `line-login-claro` (paso 8.2), cierra sesión de LINE en tu Brave normal y desconecta la VPN mientras inicias sesión. |
 
 ---
 
-## 9. Seguridad
+## 10. Seguridad
 
 - **Nunca** compartas contraseñas en chats, capturas de pantalla ni repositorios.
 - Si tus credenciales de OpenVPN se vieron en algún lado, usa **Reset credentials** en Proton.

@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=LINE (oscuro)
+Comment=LINE en Brave con tema oscuro
+Exec=sh -c "$HOME/.local/bin/line-oscuro"
+Icon=line-oscuro
+Terminal=false
+Categories=Network;InstantMessaging;
+StartupWMClass=brave-ophjlpahpchlmihnnnihgmmeilfjmjjc-Default

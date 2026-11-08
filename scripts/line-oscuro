@@ -1,0 +1,15 @@
+#!/bin/sh
+# Opens LINE in a separate Brave (Flatpak) profile with forced dark mode.
+# Your normal Brave profile is not affected.
+
+EXT_ID="ophjlpahpchlmihnnnihgmmeilfjmjjc"   # official LINE extension
+PROFILE="$HOME/.var/app/com.brave.Browser/config/BraveSoftware/Brave-LINE-Oscuro"
+FLAGS="--user-data-dir=$PROFILE --enable-features=WebContentsForceDark:inversion_method/cielab_based/image_behavior/none --force-dark-mode --no-default-browser-check --no-first-run"
+
+if ls "$PROFILE"/Default/Extensions/"$EXT_ID" >/dev/null 2>&1; then
+    # LINE is installed in this profile: open it as its own app window
+    exec flatpak run com.brave.Browser $FLAGS --app="chrome-extension://$EXT_ID/index.html"
+else
+    # First run: open the Chrome Web Store page to install LINE
+    exec flatpak run com.brave.Browser $FLAGS "https://chromewebstore.google.com/detail/line/$EXT_ID"
+fi
