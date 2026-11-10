@@ -187,7 +187,7 @@ Los scripts están en la carpeta [`scripts/`](scripts). Suponen Brave instalado 
 |---|---|
 | [`line-oscuro`](scripts/line-oscuro) | Abre LINE en su propia ventana, en modo oscuro, con un perfil de Brave separado |
 | [`line-login-claro`](scripts/line-login-claro) | Abre el mismo perfil **sin** modo oscuro, solo para iniciar sesión con el código QR |
-| [`line-oscuro.desktop`](scripts/line-oscuro.desktop) | Acceso directo "LINE (oscuro)" para el menú de aplicaciones de GNOME |
+| [`line-oscuro.desktop`](scripts/line-oscuro.desktop) | Acceso directo "LINE (Dark Mode)" para el menú de aplicaciones de GNOME |
 
 ### 8.1 Instalar
 
@@ -213,7 +213,7 @@ cp ~/.var/app/com.brave.Browser/config/BraveSoftware/Brave-Browser/Default/Exten
 
 ### 8.2 Primer uso
 
-1. Presiona **Super**, escribe **LINE** y abre **LINE (oscuro)**.
+1. Presiona **Super**, escribe **LINE** y abre **LINE (Dark Mode)**.
 2. La primera vez se abre la Chrome Web Store en la página de LINE → **Agregar a Brave**. Después cierra esa ventana.
 3. **Inicia sesión en modo claro.** En modo oscuro, el logo verde del código QR se vuelve blanco y el celular
    puede no reconocerlo. Por eso, inicia sesión una vez en modo claro:
@@ -225,13 +225,13 @@ cp ~/.var/app/com.brave.Browser/config/BraveSoftware/Brave-Browser/Default/Exten
    Escanea el QR **desde dentro de la app de LINE** (Inicio → ícono QR del buscador), confirma en el celular
    y escribe el código de 6 números.
 4. Cuando veas tus chats, **cierra esa ventana**.
-5. Abre **LINE (oscuro)** otra vez. La sesión queda guardada, así que entra directo a tus chats en modo oscuro.
+5. Abre **LINE (Dark Mode)** otra vez. La sesión queda guardada, así que entra directo a tus chats en modo oscuro.
 
 Consejo: clic derecho en su ícono del dock → **Añadir a favoritos / Fijar en el dock**.
 
 ### 8.3 Notas
 
-- LINE permite **una sola sesión de computador a la vez**. Si usas LINE (oscuro), cierra sesión en la extensión
+- LINE permite **una sola sesión de computador a la vez**. Si usas LINE (Dark Mode), cierra sesión en la extensión
   de LINE de tu Brave normal (o quítala) para evitar conflictos.
 - Si LINE vuelve a pedir inicio de sesión, repite el paso 3.
 - Cómo funciona: `line-oscuro` ejecuta Brave con
@@ -252,7 +252,7 @@ Consejo: clic derecho en su ícono del dock → **Añadir a favoritos / Fijar en
 | No aparece la opción VPN en GNOME | Instalar `network-manager-openvpn-gnome` y reiniciar NetworkManager (paso 1). |
 | Conexión lenta | Probar un servidor más cercano (US). |
 | LINE pide permiso para iniciar sesión | Activar *Permitir inicio de sesión* en el celular (paso 7.1). |
-| El código QR no hace nada en LINE (oscuro) | Inicia sesión con `line-login-claro` (paso 8.2), cierra sesión de LINE en tu Brave normal y desconecta la VPN mientras inicias sesión. |
+| El código QR no hace nada en LINE (Dark Mode) | Inicia sesión con `line-login-claro` (paso 8.2), cierra sesión de LINE en tu Brave normal y desconecta la VPN mientras inicias sesión. |
 
 ---
 

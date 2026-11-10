@@ -187,7 +187,7 @@ The scripts are in the [`scripts/`](scripts) folder. They assume Brave installed
 |---|---|
 | [`line-oscuro`](scripts/line-oscuro) | Opens LINE in its own window, in dark mode, using a separate Brave profile |
 | [`line-login-claro`](scripts/line-login-claro) | Opens the same profile **without** dark mode, only to log in with the QR code |
-| [`line-oscuro.desktop`](scripts/line-oscuro.desktop) | Shortcut "LINE (oscuro)" for the GNOME app menu |
+| [`line-oscuro.desktop`](scripts/line-oscuro.desktop) | Shortcut "LINE (Dark Mode)" for the GNOME app menu |
 
 ### 8.1 Install
 
@@ -213,7 +213,7 @@ cp ~/.var/app/com.brave.Browser/config/BraveSoftware/Brave-Browser/Default/Exten
 
 ### 8.2 First use
 
-1. Press **Super**, type **LINE** and open **LINE (oscuro)**.
+1. Press **Super**, type **LINE** and open **LINE (Dark Mode)**.
 2. The first time, the Chrome Web Store opens on the LINE page → **Add to Brave**. Then close that window.
 3. **Log in in light mode.** In dark mode the QR code's green logo turns white and the phone may not
    recognize it. So log in once in light mode:
@@ -225,13 +225,13 @@ cp ~/.var/app/com.brave.Browser/config/BraveSoftware/Brave-Browser/Default/Exten
    Scan the QR code **from inside the LINE app** (Home → QR icon in the search box), confirm on your phone
    and enter the 6-digit code.
 4. Once you see your chats, **close that window**.
-5. Open **LINE (oscuro)** again. The session is saved, so it goes straight to your chats in dark mode.
+5. Open **LINE (Dark Mode)** again. The session is saved, so it goes straight to your chats in dark mode.
 
 Tip: right-click its icon in the dock → **Pin to Dash / Add to Favorites**.
 
 ### 8.3 Notes
 
-- LINE allows **only one computer session at a time**. If you use LINE (oscuro), log out of (or remove) the
+- LINE allows **only one computer session at a time**. If you use LINE (Dark Mode), log out of (or remove) the
   LINE extension in your normal Brave to avoid conflicts.
 - If LINE ever asks you to log in again, repeat step 3.
 - How it works: `line-oscuro` runs Brave with
@@ -252,7 +252,7 @@ Tip: right-click its icon in the dock → **Pin to Dash / Add to Favorites**.
 | The VPN option does not appear in GNOME | Install `network-manager-openvpn-gnome` and restart NetworkManager (step 1). |
 | Slow connection | Try a closer server (US). |
 | LINE asks for permission to log in | Turn on *Allow login* on your phone (step 7.1). |
-| The QR code does nothing in LINE (oscuro) | Log in with `line-login-claro` (step 8.2), log out of LINE in your normal Brave, and disconnect the VPN while logging in. |
+| The QR code does nothing in LINE (Dark Mode) | Log in with `line-login-claro` (step 8.2), log out of LINE in your normal Brave, and disconnect the VPN while logging in. |
 
 ---
 

@@ -1,6 +1,6 @@
 [Desktop Entry]
 Type=Application
-Name=LINE (oscuro)
+Name=LINE (Dark Mode)
 Comment=LINE en Brave con tema oscuro
 Exec=sh -c "$HOME/.local/bin/line-oscuro"
 Icon=line-oscuro
