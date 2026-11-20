@@ -188,6 +188,7 @@ Los scripts están en la carpeta [`scripts/`](scripts). Suponen Brave instalado 
 | [`line-oscuro`](scripts/line-oscuro) | Abre LINE en su propia ventana, en modo oscuro, con un perfil de Brave separado |
 | [`line-login-claro`](scripts/line-login-claro) | Abre el mismo perfil **sin** modo oscuro (respaldo, por si algún día falla el QR) |
 | [`qr-logo.png`](scripts/qr-logo.png) | El logo "LINE" del centro del código QR, como imagen, para que el modo oscuro no lo cambie |
+| [`qr-white.png`](scripts/qr-white.png) | Cuadro blanco con el que se dibuja el margen blanco alrededor del QR |
 | [`line-oscuro.desktop`](scripts/line-oscuro.desktop) | Acceso directo "LINE (Dark Mode)" para el menú de aplicaciones de GNOME |
 
 ### 8.1 Instalar
@@ -207,7 +208,7 @@ cp scripts/line-oscuro.desktop ~/.local/share/applications/
 ```
 
 ```bash
-mkdir -p ~/.local/share/line-dark-mode && cp scripts/qr-logo.png ~/.local/share/line-dark-mode/
+mkdir -p ~/.local/share/line-dark-mode && cp scripts/qr-logo.png scripts/qr-white.png ~/.local/share/line-dark-mode/
 ```
 
 Ícono opcional (copiado de la extensión de LINE instalada en tu Brave normal):
@@ -238,10 +239,16 @@ Consejo: clic derecho en su ícono del dock → **Añadir a favoritos / Fijar en
   `--user-data-dir=<perfil separado>` y
   `--enable-features=WebContentsForceDark:inversion_method/cielab_based/image_behavior/none`
   (oscurece fondos y textos sin cambiar las imágenes), y abre la extensión con `--app=` como ventana propia.
-- Arreglo del logo del QR: el modo oscuro forzado también cambia los colores del logo del centro del QR, porque
-  LINE lo dibuja como SVG. `line-oscuro` hace una copia de la extensión de LINE (`BraveSoftware/LINE-DarkMode-ext`)
-  que muestra `qr-logo.png` en su lugar, y la carga con `--load-extension`. Cuando LINE se actualiza en la Web Store,
-  la copia se rehace sola. Brave arranca primero sin ventana y después abre LINE, para que la copia esté cargada
+- Arreglo del código QR, en dos partes:
+  - **Margen blanco:** el celular necesita un borde claro alrededor del QR para encontrarlo. En modo oscuro ese
+    borde era oscuro, y por eso el celular no reconocía el QR. La copia agrega un margen blanco, dibujado con
+    `qr-white.png` (el modo oscuro oscurecería un color de fondo blanco, pero no una imagen).
+  - **Logo:** el modo oscuro forzado también cambia los colores del logo del centro del QR, porque LINE lo
+    dibuja como SVG. La copia muestra `qr-logo.png` en su lugar.
+
+  `line-oscuro` hace esa copia de la extensión de LINE (`BraveSoftware/LINE-DarkMode-ext`) y la carga con `--load-extension`. Después, Brave borra su propia copia de
+  LINE, así que el script guarda una copia sin cambios en `~/.local/share/line-dark-mode/original`. Cuando LINE
+  se actualiza en la Web Store, la copia se rehace sola. Brave arranca primero sin ventana y después abre LINE, para que la copia esté cargada
   antes que la ventana (si no, Brave muestra "blocked"). Al cerrar la ventana, Brave sigue en segundo plano,
   así que LINE abre más rápido la próxima vez.
 - Para desinstalar: borra los archivos que copiaste, la carpeta `~/.local/share/line-dark-mode` y las carpetas
@@ -258,7 +265,7 @@ Consejo: clic derecho en su ícono del dock → **Añadir a favoritos / Fijar en
 | No aparece la opción VPN en GNOME | Instalar `network-manager-openvpn-gnome` y reiniciar NetworkManager (paso 1). |
 | Conexión lenta | Probar un servidor más cercano (US). |
 | LINE pide permiso para iniciar sesión | Activar *Permitir inicio de sesión* en el celular (paso 7.1). |
-| El código QR no hace nada en LINE (Dark Mode) | Revisa que exista `~/.local/share/line-dark-mode/qr-logo.png` (paso 8.1). Si sigue fallando, inicia sesión con `line-login-claro`, cierra sesión de LINE en tu Brave normal y desconecta la VPN mientras inicias sesión. |
+| El código QR no hace nada en LINE (Dark Mode) | Revisa que `qr-logo.png` y `qr-white.png` estén en `~/.local/share/line-dark-mode/` (paso 8.1). Si sigue fallando, inicia sesión con `line-login-claro`, cierra sesión de LINE en tu Brave normal y desconecta la VPN mientras inicias sesión. |
 
 ---
 

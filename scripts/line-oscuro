@@ -14,22 +14,41 @@ EXT_ID="ophjlpahpchlmihnnnihgmmeilfjmjjc"   # official LINE extension
 BRAVE_DIR="$HOME/.var/app/com.brave.Browser/config/BraveSoftware"
 PROFILE="$BRAVE_DIR/Brave-LINE-Oscuro"
 PATCHED="$BRAVE_DIR/LINE-DarkMode-ext"                 # patched copy of LINE
-LOGO="$HOME/.local/share/line-dark-mode/qr-logo.png"   # QR logo as an image
+DATA="$HOME/.local/share/line-dark-mode"
+LOGO="$DATA/qr-logo.png"     # QR logo as an image
+WHITE="$DATA/qr-white.png"   # white square for the margin around the QR
+PATCH_REV="2"                # change this when the patch below changes
 APP_URL="chrome-extension://$EXT_ID/index.html"
 
 DARK="--enable-features=WebContentsForceDark:inversion_method/cielab_based/image_behavior/none --force-dark-mode"
 [ "$1" = "--claro" ] && DARK=""
 
-# Make (or refresh) the patched copy from the LINE installed by the Web Store.
-STORE=$(ls -d "$PROFILE"/Default/Extensions/"$EXT_ID"/*/ 2>/dev/null | sort -V | tail -1)
-if [ -n "$STORE" ] && [ -f "$LOGO" ]; then
-    VERSION=$(basename "$STORE")
+# Keep an untouched copy of the LINE installed by the Web Store. Brave removes
+# its own copy once the patched one is loaded, so this is the source for the patch.
+ORIGINAL="$DATA/original"
+NEW=$(ls -d "$PROFILE"/Default/Extensions/"$EXT_ID"/*/ 2>/dev/null | sort -V | tail -1)
+if [ -n "$NEW" ] && [ "$(basename "$NEW")" != "$(ls "$ORIGINAL" 2>/dev/null)" ]; then
+    rm -rf "$ORIGINAL" && mkdir -p "$ORIGINAL" && cp -r "$NEW" "$ORIGINAL/"
+fi
+STORE=$(ls -d "$ORIGINAL"/*/ 2>/dev/null | sort -V | tail -1)
+
+# Make (or refresh) the patched copy.
+if [ -n "$STORE" ] && [ -f "$LOGO" ] && [ -f "$WHITE" ]; then
+    VERSION="$(basename "$STORE")-fix$PATCH_REV"
     if [ "$(cat "$PATCHED/.version" 2>/dev/null)" != "$VERSION" ]; then
         rm -rf "$PATCHED"
         cp -r "$STORE" "$PATCHED"
         rm -rf "$PATCHED/_metadata"
         cp "$LOGO" "$PATCHED/qr-logo.png"
-        printf '[class*="icon_qr_line"]{content:url(/qr-logo.png)}\n' > "$PATCHED/qr-fix.css"
+        cp "$WHITE" "$PATCHED/qr-white.png"
+        # 1) The logo in the middle of the QR, as an image.
+        # 2) A white margin around the QR. Phones need a light border around a QR
+        #    code to find it; in dark mode it was dark. It is drawn with an image
+        #    (border-image) because dark mode would darken a white background color.
+        cat > "$PATCHED/qr-fix.css" <<'CSS'
+[class*="icon_qr_line"]{content:url(/qr-logo.png)}
+[class*="loginQr-module__thumbnail"]{border:16px solid transparent;border-image:url(/qr-white.png) 1 stretch;box-sizing:content-box}
+CSS
         sed -i 's#</head>#<link href="/qr-fix.css" rel="stylesheet"></head>#' "$PATCHED/index.html"
         echo "$VERSION" > "$PATCHED/.version"
     fi

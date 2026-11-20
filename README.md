@@ -188,6 +188,7 @@ The scripts are in the [`scripts/`](scripts) folder. They assume Brave installed
 | [`line-oscuro`](scripts/line-oscuro) | Opens LINE in its own window, in dark mode, using a separate Brave profile |
 | [`line-login-claro`](scripts/line-login-claro) | Opens the same profile **without** dark mode (backup, in case the QR ever fails) |
 | [`qr-logo.png`](scripts/qr-logo.png) | The "LINE" logo in the middle of the QR code, as an image, so dark mode does not change it |
+| [`qr-white.png`](scripts/qr-white.png) | White square used to draw the white margin around the QR code |
 | [`line-oscuro.desktop`](scripts/line-oscuro.desktop) | Shortcut "LINE (Dark Mode)" for the GNOME app menu |
 
 ### 8.1 Install
@@ -207,7 +208,7 @@ cp scripts/line-oscuro.desktop ~/.local/share/applications/
 ```
 
 ```bash
-mkdir -p ~/.local/share/line-dark-mode && cp scripts/qr-logo.png ~/.local/share/line-dark-mode/
+mkdir -p ~/.local/share/line-dark-mode && cp scripts/qr-logo.png scripts/qr-white.png ~/.local/share/line-dark-mode/
 ```
 
 Optional icon (copied from the installed LINE extension in your normal Brave):
@@ -238,10 +239,16 @@ Tip: right-click its icon in the dock → **Pin to Dash / Add to Favorites**.
   `--user-data-dir=<separate profile>` and
   `--enable-features=WebContentsForceDark:inversion_method/cielab_based/image_behavior/none`
   (darkens backgrounds and text without changing images), and opens the extension with `--app=` as its own window.
-- QR logo fix: forced dark mode also recolors the logo in the middle of the QR, because LINE draws it as an SVG.
-  `line-oscuro` makes a copy of the LINE extension (`BraveSoftware/LINE-DarkMode-ext`) that shows
-  `qr-logo.png` instead, and loads it with `--load-extension`. When LINE updates from the Web Store, the
-  copy is rebuilt automatically. Brave starts without a window first and then opens LINE, so the copy is
+- QR code fix, two parts:
+  - **White margin:** phones need a light border around a QR code to find it. In dark mode that border was
+    dark, so the phone did not recognize the QR. The copy adds a white margin, drawn with `qr-white.png`
+    (dark mode would darken a white background color, but not an image).
+  - **Logo:** forced dark mode also recolors the logo in the middle of the QR, because LINE draws it as an SVG.
+    The copy shows `qr-logo.png` instead.
+
+  `line-oscuro` makes that copy of the LINE extension (`BraveSoftware/LINE-DarkMode-ext`) and loads it with `--load-extension`. Brave then removes its own copy of
+  LINE, so the script keeps an untouched one in `~/.local/share/line-dark-mode/original`. When LINE updates
+  from the Web Store, the copy is rebuilt automatically. Brave starts without a window first and then opens LINE, so the copy is
   loaded before the window (otherwise Brave shows "blocked"). Brave keeps running in the background after
   you close the window, so LINE opens faster the next time.
 - To uninstall: delete the files you copied, the folder `~/.local/share/line-dark-mode` and the folders
@@ -258,7 +265,7 @@ Tip: right-click its icon in the dock → **Pin to Dash / Add to Favorites**.
 | The VPN option does not appear in GNOME | Install `network-manager-openvpn-gnome` and restart NetworkManager (step 1). |
 | Slow connection | Try a closer server (US). |
 | LINE asks for permission to log in | Turn on *Allow login* on your phone (step 7.1). |
-| The QR code does nothing in LINE (Dark Mode) | Check that `~/.local/share/line-dark-mode/qr-logo.png` exists (step 8.1). If it still fails, log in with `line-login-claro`, log out of LINE in your normal Brave, and disconnect the VPN while logging in. |
+| The QR code does nothing in LINE (Dark Mode) | Check that `qr-logo.png` and `qr-white.png` are in `~/.local/share/line-dark-mode/` (step 8.1). If it still fails, log in with `line-login-claro`, log out of LINE in your normal Brave, and disconnect the VPN while logging in. |
 
 ---
 
