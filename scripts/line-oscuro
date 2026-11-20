@@ -1,15 +1,54 @@
 #!/bin/sh
 # Opens LINE in a separate Brave (Flatpak) profile with forced dark mode.
 # Your normal Brave profile is not affected.
+#
+# Forced dark mode also recolors the "LINE" logo in the middle of the QR code,
+# and then the phone does not recognize the QR right away. To fix that, this
+# script runs a copy of the LINE extension where that logo is a PNG image
+# (forced dark mode does not touch images).
+#
+# Usage: line-oscuro            dark mode
+#        line-oscuro --claro    light mode (backup for logging in)
 
 EXT_ID="ophjlpahpchlmihnnnihgmmeilfjmjjc"   # official LINE extension
-PROFILE="$HOME/.var/app/com.brave.Browser/config/BraveSoftware/Brave-LINE-Oscuro"
-FLAGS="--user-data-dir=$PROFILE --enable-features=WebContentsForceDark:inversion_method/cielab_based/image_behavior/none --force-dark-mode --no-default-browser-check --no-first-run"
+BRAVE_DIR="$HOME/.var/app/com.brave.Browser/config/BraveSoftware"
+PROFILE="$BRAVE_DIR/Brave-LINE-Oscuro"
+PATCHED="$BRAVE_DIR/LINE-DarkMode-ext"                 # patched copy of LINE
+LOGO="$HOME/.local/share/line-dark-mode/qr-logo.png"   # QR logo as an image
+APP_URL="chrome-extension://$EXT_ID/index.html"
 
-if ls "$PROFILE"/Default/Extensions/"$EXT_ID" >/dev/null 2>&1; then
-    # LINE is installed in this profile: open it as its own app window
-    exec flatpak run com.brave.Browser $FLAGS --app="chrome-extension://$EXT_ID/index.html"
-else
+DARK="--enable-features=WebContentsForceDark:inversion_method/cielab_based/image_behavior/none --force-dark-mode"
+[ "$1" = "--claro" ] && DARK=""
+
+# Make (or refresh) the patched copy from the LINE installed by the Web Store.
+STORE=$(ls -d "$PROFILE"/Default/Extensions/"$EXT_ID"/*/ 2>/dev/null | sort -V | tail -1)
+if [ -n "$STORE" ] && [ -f "$LOGO" ]; then
+    VERSION=$(basename "$STORE")
+    if [ "$(cat "$PATCHED/.version" 2>/dev/null)" != "$VERSION" ]; then
+        rm -rf "$PATCHED"
+        cp -r "$STORE" "$PATCHED"
+        rm -rf "$PATCHED/_metadata"
+        cp "$LOGO" "$PATCHED/qr-logo.png"
+        printf '[class*="icon_qr_line"]{content:url(/qr-logo.png)}\n' > "$PATCHED/qr-fix.css"
+        sed -i 's#</head>#<link href="/qr-fix.css" rel="stylesheet"></head>#' "$PATCHED/index.html"
+        echo "$VERSION" > "$PATCHED/.version"
+    fi
+fi
+
+FLAGS="--user-data-dir=$PROFILE $DARK --no-default-browser-check --no-first-run"
+
+if [ ! -f "$PATCHED/.version" ]; then
     # First run: open the Chrome Web Store page to install LINE
     exec flatpak run com.brave.Browser $FLAGS "https://chromewebstore.google.com/detail/line/$EXT_ID"
 fi
+
+FLAGS="$FLAGS --disable-features=DisableLoadExtensionCommandLineSwitch --load-extension=$PATCHED"
+
+# Start Brave without a window first, so the patched LINE is loaded before its
+# window opens (otherwise Brave shows "blocked"). If it is already running,
+# this does nothing.
+if ! pgrep -f "[u]ser-data-dir=$PROFILE" >/dev/null; then
+    flatpak run com.brave.Browser $FLAGS --no-startup-window >/dev/null 2>&1 &
+    sleep 4
+fi
+exec flatpak run com.brave.Browser $FLAGS --app="$APP_URL"

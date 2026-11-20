@@ -1,6 +1,7 @@
 #!/bin/sh
 # Opens the LINE (Dark Mode) profile WITHOUT dark mode, only to log in with the QR code.
 # After logging in, close this window and open "LINE (Dark Mode)" as usual.
-EXT_ID="ophjlpahpchlmihnnnihgmmeilfjmjjc"
 PROFILE="$HOME/.var/app/com.brave.Browser/config/BraveSoftware/Brave-LINE-Oscuro"
-exec flatpak run com.brave.Browser --user-data-dir="$PROFILE" --no-first-run --no-default-browser-check --app="chrome-extension://$EXT_ID/index.html"
+# Close the LINE (Dark Mode) Brave if it is running, so it restarts in light mode
+pkill -f "[u]ser-data-dir=$PROFILE" && sleep 3
+exec "$HOME/.local/bin/line-oscuro" --claro
